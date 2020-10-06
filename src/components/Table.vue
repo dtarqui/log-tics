@@ -3,7 +3,7 @@
     :headers="headers"
     :items="desserts"
     :search="search"
-    sort-by="calories"
+    sort-by="dateInit"
     class="elevation-1"
   >
     <template v-slot:top>
@@ -42,26 +42,26 @@
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem.calories"
-                      label="Calories"
+                      v-model="editedItem.dateInit"
+                      label="Date"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem.fat"
-                      label="Fat (g)"
+                      v-model="editedItem.description"
+                      label="description"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
-                      v-model="editedItem.carbs"
-                      label="Carbs (g)"
+                      v-model="editedItem.observations"
+                      label="observations"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
                       v-model="editedItem.protein"
-                      label="Protein (g)"
+                      label="Protein "
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -120,27 +120,23 @@ export default {
         sortable: false,
         value: "title",
       },
-      { text: "Start date", value: "calories" },
-      { text: "Fat (g)", value: "fat" },
-      { text: "Carbs (g)", value: "carbs" },
-      { text: "Protein (g)", value: "protein" },
-      { text: "Actions", value: "actions", sortable: false },
+      { text: "Date", value: "dateInit" },
+      { text: "Description", value: "description" },
+      { text: "Observations", value: "observations" },
     ],
     desserts: [],
     editedIndex: -1,
     editedItem: {
       title: "",
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0,
+      dateInit: "",
+      description: "",
+      observations: "",
     },
     defaultItem: {
       title: "",
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0,
+      dateInit: "",
+      description: "",
+      observations: "",
     },
   }),
   components: {
@@ -168,16 +164,16 @@ export default {
       this.desserts = [
         {
           title: "Frozen Yogurt",
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
+          dateInit: "Today",
+          description: "Fulano's description",
+          observations: "Nothing",
           protein: 4.0,
         },
         {
           title: "Ice cream sandwich",
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
+          dateInit: "23/07/2020",
+          description: "Fulano's description",
+          observations: "Nothing",
           protein: 4.3,
         },
       ];
