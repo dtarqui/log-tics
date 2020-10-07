@@ -1,7 +1,7 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="desserts"
+    :items="logsData"
     :search="search"
     sort-by="dateInit"
     class="elevation-1"
@@ -40,28 +40,22 @@
                       label="Title"
                     ></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
+                  <!-- <v-col cols="12" sm="6" md="4">
                     <v-text-field
                       v-model="editedItem.dateInit"
                       label="Date"
                     ></v-text-field>
-                  </v-col>
+                  </v-col> -->
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
                       v-model="editedItem.description"
-                      label="description"
+                      label="Description"
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field
                       v-model="editedItem.observations"
-                      label="observations"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      v-model="editedItem.protein"
-                      label="Protein "
+                      label="Observations"
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -120,11 +114,12 @@ export default {
         sortable: false,
         value: "title",
       },
-      { text: "Date", value: "dateInit" },
+      { text: "Date (MM/DD/YYYY, HH:MM:SS)", value: "dateInit" },
       { text: "Description", value: "description" },
       { text: "Observations", value: "observations" },
+      { text: "Actions", value: "actions", sortable: false },
     ],
-    desserts: [],
+    logsData: [],
     editedIndex: -1,
     editedItem: {
       title: "",
@@ -161,17 +156,17 @@ export default {
   },
   methods: {
     initialize() {
-      this.desserts = [
+      this.logsData = [
         {
           title: "Frozen Yogurt",
-          dateInit: "Today",
+          dateInit: "10/6/2020, 9:51:10 PM",
           description: "Fulano's description",
           observations: "Nothing",
           protein: 4.0,
         },
         {
           title: "Ice cream sandwich",
-          dateInit: "23/07/2020",
+          dateInit: "10/6/2020, 9:51:10 PM",
           description: "Fulano's description",
           observations: "Nothing",
           protein: 4.3,
@@ -179,17 +174,18 @@ export default {
       ];
     },
     editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
+      item.dateInit = new Date().toLocaleString();
+      this.editedIndex = this.logsData.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
     deleteItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
+      this.editedIndex = this.logsData.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
     },
     deleteItemConfirm() {
-      this.desserts.splice(this.editedIndex, 1);
+      this.logsData.splice(this.editedIndex, 1);
       this.closeDelete();
     },
     close() {
@@ -208,9 +204,11 @@ export default {
     },
     save() {
       if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem);
+        Object.assign(this.logsData[this.editedIndex], this.editedItem);
       } else {
-        this.desserts.push(this.editedItem);
+        this.editedItem.dateInit = new Date().toLocaleString();
+        // .replace(/-/g,' - ');
+        this.logsData.push(this.editedItem);
       }
       this.close();
     },
