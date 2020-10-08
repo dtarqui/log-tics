@@ -58,6 +58,12 @@
                       label="Observations"
                     ></v-text-field>
                   </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-text-field
+                      v-model="editedItem.responsable"
+                      label="Responsable"
+                    ></v-text-field>
+                  </v-col>
                 </v-row>
               </v-container>
             </v-card-text>
@@ -106,6 +112,7 @@ export default {
   data: () => ({
     search: "",
     dialog: false,
+    resource: {},
     dialogDelete: false,
     headers: [
       {
@@ -117,6 +124,7 @@ export default {
       { text: "Date (MM/DD/YYYY, HH:MM:SS)", value: "dateInit" },
       { text: "Description", value: "description" },
       { text: "Observations", value: "observations" },
+      { text: "Responsable", value: "responsable" },
       { text: "Actions", value: "actions", sortable: false },
     ],
     logsData: [],
@@ -126,12 +134,14 @@ export default {
       dateInit: "",
       description: "",
       observations: "",
+      responsable: "",
     },
     defaultItem: {
       title: "",
       dateInit: "",
       description: "",
       observations: "",
+      responsable: "",
     },
   }),
   components: {
@@ -151,9 +161,7 @@ export default {
       val || this.closeDelete();
     },
   },
-  created() {
-    this.initialize();
-  },
+
   methods: {
     initialize() {
       this.logsData = [
@@ -162,16 +170,23 @@ export default {
           dateInit: "10/6/2020, 9:51:10 PM",
           description: "Fulano's description",
           observations: "Nothing",
-          protein: 4.0,
-        },
-        {
-          title: "Ice cream sandwich",
-          dateInit: "10/6/2020, 9:51:10 PM",
-          description: "Fulano's description",
-          observations: "Nothing",
-          protein: 4.3,
+          responsable: "Fulano",
         },
       ];
+
+      this.resource
+        .getData({ node: "logs" })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          // console.log(data);
+          const resultArray = [];
+          for (let key in data) {
+            resultArray.push(data[key]);
+          }
+          this.logsData = resultArray;
+        });
     },
     editItem(item) {
       item.dateInit = new Date().toLocaleString();
@@ -207,11 +222,22 @@ export default {
         Object.assign(this.logsData[this.editedIndex], this.editedItem);
       } else {
         this.editedItem.dateInit = new Date().toLocaleString();
+        this.resource.saveAlt(this.editedItem);
         // .replace(/-/g,' - ');
         this.logsData.push(this.editedItem);
       }
       this.close();
     },
+  },
+  created() {
+    const customAction = {
+      saveAlt: { method: "POST", url: "logs.json" },
+      getData: { method: "GET" },
+    };
+    // this.resource = this.$resource(this.url);
+    // this.resource = this.$resource(this.url, {}, customAction);
+    this.resource = this.$resource("{node}.json", {}, customAction);
+    this.initialize();
   },
 };
 </script>
