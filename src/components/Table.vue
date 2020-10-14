@@ -27,6 +27,7 @@
               </v-btn>
             </div>
           </template>
+
           <v-card>
             <v-card-title>
               <span class="headline">{{ formTitle }}</span>
@@ -94,6 +95,7 @@
         </v-dialog>
       </v-toolbar>
     </template>
+
     <template v-slot:[`item.actions`]="{ item }">
       <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
       <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
@@ -164,16 +166,6 @@ export default {
 
   methods: {
     initialize() {
-      this.logsData = [
-        {
-          title: "Frozen Yogurt",
-          dateInit: "10/6/2020, 9:51:10 PM",
-          description: "Fulano's description",
-          observations: "Nothing",
-          responsable: "Fulano",
-        },
-      ];
-
       this.resource
         .getData({ node: "logs" })
         .then((response) => {
@@ -183,7 +175,16 @@ export default {
           // console.log(data);
           const resultArray = [];
           for (let key in data) {
-            resultArray.push(data[key]);
+            let aux = {
+              id: key,
+              title: data[key].title,
+              dateInit: data[key].dateInit,
+              description: data[key].description,
+              observations: data[key].observations,
+              responsable: data[key].responsable,
+            };
+            // console.log(aux);
+            resultArray.push(aux);
           }
           this.logsData = resultArray;
         });
@@ -192,6 +193,7 @@ export default {
       item.dateInit = new Date().toLocaleString();
       this.editedIndex = this.logsData.indexOf(item);
       this.editedItem = Object.assign({}, item);
+      console.log("EDITED");
       this.dialog = true;
     },
     deleteItem(item) {
@@ -200,6 +202,10 @@ export default {
       this.dialogDelete = true;
     },
     deleteItemConfirm() {
+      // console.log(this.logsData[this.editedIndex]);
+      this.resource.delData({
+        node: "logs/" + this.logsData[this.editedIndex].id,
+      });
       this.logsData.splice(this.editedIndex, 1);
       this.closeDelete();
     },
@@ -219,6 +225,9 @@ export default {
     },
     save() {
       if (this.editedIndex > -1) {
+        this.resource.upData({
+          node: "logs/" + this.logsData[this.editedIndex].id,
+        },this.editedItem );
         Object.assign(this.logsData[this.editedIndex], this.editedItem);
       } else {
         this.editedItem.dateInit = new Date().toLocaleString();
@@ -226,6 +235,7 @@ export default {
         // .replace(/-/g,' - ');
         this.logsData.push(this.editedItem);
       }
+      console.log("SAVED");
       this.close();
     },
   },
@@ -233,6 +243,8 @@ export default {
     const customAction = {
       saveAlt: { method: "POST", url: "logs.json" },
       getData: { method: "GET" },
+      upData: { method: "PUT" },
+      delData: { method: "DELETE" },
     };
     // this.resource = this.$resource(this.url);
     // this.resource = this.$resource(this.url, {}, customAction);
