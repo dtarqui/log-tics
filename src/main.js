@@ -5,7 +5,7 @@ import VueResource from 'vue-resource'
 
 Vue.use(VueResource);
 Vue.config.productionTip = false
-Vue.http.options.root = "https://vue-http-fulano.firebaseio.com/";
+Vue.http.options.root = "https://xxxxxxxxxx.firebaseio.com/";
 new Vue({
   vuetify,
   render: h => h(App)
